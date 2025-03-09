@@ -37,8 +37,9 @@
                 to="/signup"
                 class="text-dark text-weight-bold"
                 style="text-decoration: none"
-                >Cadastrar.</router-link
               >
+                Cadastrar
+              </router-link>
             </q-card-section>
           </q-card>
         </q-page>

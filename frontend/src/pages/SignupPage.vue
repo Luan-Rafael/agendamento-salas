@@ -39,8 +39,9 @@
                 to="/login"
                 class="text-dark text-weight-bold"
                 style="text-decoration: none"
-                >Entrar.</router-link
               >
+                Entrar
+              </router-link>
             </q-card-section>
           </q-card>
         </q-page>
@@ -66,8 +67,8 @@ const password = ref('')
 async function onSubmit() {
   const authStore = useAuthStore()
 
-
-  await authStore.signup(name.value, email.value, password.value)
+  await authStore
+    .signup(name.value, email.value, password.value)
     .then(() => router.push('/home'))
     .catch((err) => {
       $q.notify({
@@ -79,10 +80,9 @@ async function onSubmit() {
     })
 }
 
-async function onReset( ) {
+async function onReset() {
   name.value = ''
   email.value = ''
   password.value = ''
 }
-
 </script>
