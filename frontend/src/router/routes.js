@@ -1,5 +1,4 @@
 const routes = [
-
   {
     path: '/home',
     component: () => import('layouts/MainLayout.vue'),
@@ -21,8 +20,7 @@ const routes = [
   },
   {
     path: "/:catchAll(.*)",
-    component: () => import('pages/ErrorNotFound.vue')
-
+    redirect: "login"
   }
 ]
 
