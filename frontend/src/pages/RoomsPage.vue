@@ -1,14 +1,8 @@
 <template>
-  <create-room-form
-    v-if="dialog.isOpen"
-    :name="dialog.name"
-    :id="dialog.id"
-    @closeModal="openDialog"
-  ></create-room-form>
-  <div class="rooms-page">
-    <q-btn class="btn" @click="() => openDialog({ isOpen: true })">Nova Sala</q-btn>
+  <div class="flex column">
+    <create-room-form @refresh="fetchRooms" />
     <div class="q-pa-md">
-      <q-table title="Salas" :rows="rows" :columns="columns" row-key="name" />
+      <q-table title="Salas" :rows="rows" :columns="columns" row-key="id" />
     </div>
   </div>
 </template>
@@ -18,23 +12,10 @@ import { useQuasar } from 'quasar'
 import { api } from 'src/boot/axios'
 import { ref } from 'vue'
 import CreateRoomForm from './components/CreateRoomForm.vue'
+import { formatDateToString } from 'src/utils/text'
 
 const $q = useQuasar()
 
-const dialog = ref({
-  isOpen: false,
-  id: null,
-  name: '',
-})
-
-function openDialog({ isOpen = false, id = null, name = '' }) {
-  console.log(isOpen)
-  dialog.value = {
-    isOpen,
-    id,
-    name,
-  }
-}
 const columns = [
   {
     name: 'name',
@@ -45,18 +26,18 @@ const columns = [
     align: 'left',
   },
   {
-    name: 'createdAt',
+    name: 'created_at',
     required: true,
     label: 'Data Registro',
-    field: (row) => row.createdAt,
+    field: (row) => formatDateToString(row.created_at),
     sortable: true,
     align: 'left',
   },
   {
-    name: 'updatedAt',
+    name: 'updated_at',
     required: true,
     label: 'Data Alteração',
-    field: (row) => row.updatedAt,
+    field: (row) => row.updated_at,
     sortable: true,
     align: 'left',
   },
@@ -65,24 +46,19 @@ const columns = [
 const rows = ref([])
 
 const fetchRooms = async () => {
-  const response = await api.get('/v1/rooms')
+  const response = await api.get('/v1/rooms').catch((error) => {
+    $q.notify({
+      message: error.message,
+      color: 'negative',
+      position: 'bottom',
+      timeout: 1000,
+    })
+  })
   const { rooms } = response.data
   rows.value = rooms
 }
 
-fetchRooms().catch((error) => {
-  $q.notify({
-    message: error.message,
-    color: 'negative',
-    position: 'bottom',
-    timeout: 1000,
-  })
-})
+fetchRooms()
 </script>
 
-<style scoped>
-.btn {
-  display: flex;
-  margin-left: auto;
-}
-</style>
+<style scoped></style>
