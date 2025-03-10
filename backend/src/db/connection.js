@@ -9,7 +9,8 @@ const createTables = () => {
           id INTEGER PRIMARY KEY AUTOINCREMENT,
           name TEXT NOT NULL,
           email TEXT UNIQUE NOT NULL,
-          password TEXT NOT NULL
+          password TEXT NOT NULL,
+          role TEXT NOT NULL
         );       
       `);
 
@@ -34,11 +35,11 @@ const createTables = () => {
         )`);
 
     db.run(`
-              -- Verifica se o usuário já existe
-      INSERT INTO users (name, email, password)
-      SELECT 'luan', 'luan.araujo', 'teste'
+      -- Verifica se o usuário já existe
+      INSERT INTO users (name, email, password, role)
+      SELECT 'luan', 'luan.araujo', 'teste', 'admin'
       WHERE NOT EXISTS (SELECT 1 FROM users WHERE email = 'luan.araujo');
-`);
+    `);
 
     console.log(
       'Tabelas ["users", "rooms", "reservations"] criadas ou já existentem.'
