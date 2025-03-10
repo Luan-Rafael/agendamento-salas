@@ -40,7 +40,7 @@ export async function login(request, response, next) {
 }
 
 export async function registerUser(request, response, next) {
-  const { name, email, password } = request.body;
+  const { name, email, password } = request.body; 
 
   try {
     if (!(name && email && password)) {
@@ -56,7 +56,7 @@ export async function registerUser(request, response, next) {
     const hash = await hashPassword(password);
 
     const { lastID } = await execute(
-      `insert into users (name, email, password) values(?,?,?);`,
+      `insert into users (name, email, password, role) values(?,?,?, 'user');`,
       [name, email, hash]
     );
 
