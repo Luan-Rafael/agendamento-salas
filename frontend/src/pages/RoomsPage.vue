@@ -1,51 +1,40 @@
 <template>
-   <q-dialog v-model="dialog.open">
-      <q-card>
-        <q-card-section>
-          <div class="text-h6">Cadastrar uma nova sala</div>
-        </q-card-section>
- <q-form
-          @submit="onSubmit"
-          @reset="onReset"
-        >
-
-        <q-card-section class="q-pt-none">
-
-              <q-input v-model="email" label="name" :rules="[rules.required, rules.minLenght]" />
-              <q-input v-model="password" label="Senha" type="password" />
-
-
-              <q-btn class="q-mt-xs" style="width: 100%;" type="submit">Entrar</q-btn>
-
-
-        </q-card-section>
-
-        <q-card-actions align="right">
-          <q-btn flat label="Salvar" color="primary" v-close-popup type="submit" />
-        </q-card-actions>
-      </q-form>
-      </q-card>
-    </q-dialog>
-
+  <create-room-form
+    v-if="dialog.isOpen"
+    :name="dialog.name"
+    :id="dialog.id"
+    @closeModal="openDialog"
+  ></create-room-form>
   <div class="rooms-page">
-    <q-btn class="btn" @click="openDialog">Nova Sala</q-btn>
+    <q-btn class="btn" @click="() => openDialog({ isOpen: true })">Nova Sala</q-btn>
     <div class="q-pa-md">
       <q-table title="Salas" :rows="rows" :columns="columns" row-key="name" />
     </div>
   </div>
 </template>
 
-<script setup >
-import { useQuasar  } from 'quasar'
+<script setup>
+import { useQuasar } from 'quasar'
 import { api } from 'src/boot/axios'
-import rules from 'src/utils/rules'
-import {  ref } from 'vue'
+import { ref } from 'vue'
+import CreateRoomForm from './components/CreateRoomForm.vue'
 
 const $q = useQuasar()
 
-const dialog = ref({})
+const dialog = ref({
+  isOpen: false,
+  id: null,
+  name: '',
+})
 
-
+function openDialog({ isOpen = false, id = null, name = '' }) {
+  console.log(isOpen)
+  dialog.value = {
+    isOpen,
+    id,
+    name,
+  }
+}
 const columns = [
   {
     name: 'name',
@@ -89,22 +78,11 @@ fetchRooms().catch((error) => {
     timeout: 1000,
   })
 })
-
-function openDialog({id = null, name = ''}) {
-  dialog.value = {
-    open: true,
-    id: id,
-    name: name
-  }
-}
-
-function onSubmit() {
-
-}
 </script>
 
 <style scoped>
 .btn {
-  display: flex ;
+  display: flex;
   margin-left: auto;
-}</style>
+}
+</style>
