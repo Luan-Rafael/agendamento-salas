@@ -1,5 +1,12 @@
 import sqlite from "sqlite3";
 import { hashPassword } from "../utils/bcrypt.js";
+import fs from 'node:fs'
+
+const existDataBase = fs.existsSync('./DATABASE.db')
+ 
+if(!existDataBase) {
+  fs.writeFileSync('./DATABASE.db', '')
+}
 
 const db = new sqlite.Database("./DATABASE.db", sqlite.OPEN_READWRITE);
 
@@ -12,6 +19,7 @@ const userAdmin = {
 
 const createTables = () => {
   db.serialize(async () => {
+    // Tabela de usuários
     db.run(`
         CREATE TABLE IF NOT EXISTS users (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -40,6 +48,7 @@ const createTables = () => {
     db.run(`
         CREATE TABLE IF NOT EXISTS reservations (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
+          description TEXT NOT NULL,
           user_id INTEGER NOT NULL,
           room_id INTEGER NOT NULL,
           start_time TEXT NOT NULL,
