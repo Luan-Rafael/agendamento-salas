@@ -1,6 +1,10 @@
 const THREEHOURSINMILLISECONDS = 60 * 1000 * 60 * 3
 
 export function formatDateTimeToString(value) {
+  if (!value) {
+    return ''
+  }
+
   const dateValue = new Date(value)
 
   const date = new Date(dateValue.getTime() - THREEHOURSINMILLISECONDS)
