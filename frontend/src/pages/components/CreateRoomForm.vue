@@ -48,7 +48,7 @@ function openDialog({ isOpen = false, id = null, name = '' }) {
 
 async function onSubmit() {
   model.isLoading = true
-  await api.post('/v1/rooms', { name: model.name })
+  await api.post('/v1/room', { name: model.name })
     .then(() => {
       $q.notify({
         message: 'Registro salvo com sucesso',
