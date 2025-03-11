@@ -17,15 +17,23 @@
                 color="cyan-8"
               >
               </q-input>
+
               <q-input
                 dense
                 outlined
                 v-model="password"
-                type="password"
+                :type="isPwd ? 'password' : 'text'"
                 label="Password"
                 :rules="[rules.required, rules.minLenght]"
                 color="cyan-8"
               >
+                <template v-slot:append>
+                  <q-icon
+                    :name="isPwd ? 'visibility_off' : 'visibility'"
+                    class="cursor-pointer"
+                    @click="isPwd = !isPwd"
+                  />
+                </template>
               </q-input>
             </q-card-section>
             <q-card-section>
@@ -68,6 +76,8 @@ const $q = useQuasar()
 
 const email = ref('')
 const password = ref('')
+
+const isPwd = ref(true)
 
 async function onSubmit() {
   await authStore
