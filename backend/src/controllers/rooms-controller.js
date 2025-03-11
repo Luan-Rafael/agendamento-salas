@@ -41,33 +41,80 @@ export async function updateRoom(request, response, next) {
       throw new ApiError("Dados ausentes", 400);
     }
 
-    const rooms = await findAll(`update set name = ? from rooms where id = ?`, [
-      name,
-      id,
-    ]);
+    await execute(`update set name = ?, updated_at = current_timestamp from rooms where id = ?`, [name, id]);
 
-    response.json({ rooms });
+    response.status(201).send();
   } catch (error) {
     next(error);
   }
 }
 
-export async function getBookings(request, response, next) {
+export async function getReservations(request, response, next) {
   try {
-    const { id } = request.user;
-    const bookings = await findAll(`select * from bookings`, [id]);
-    response.json({ bookings });
+    const { id: userId } = request.user;
+
+    const user = await find(`select * from users where id = ?`, [userId])
+
+    let where = '';
+    const params = []
+    if (user.role !== 'admin') {
+      where = 'where user_id = ?'
+      params.push(userId)
+    }
+
+    const reservations = await findAll(`select * from reservations ${where}`, params);
+
+    response.json({ reservations });
   } catch (error) {
     next(error);
   }
 }
 
-export async function createBooking(request, response, next) {
+export async function createReservation(request, response, next) {
   try {
-    const { id } = request.user;
-    const bookings = await findAll(`select * from bookings`, [id]);
-    response.json({ bookings });
+    const { id: userId } = request.user;
+    const { description, roomId, startTime, endTime } = request.body
+
+
+    const { isReservated } = await validateReservation(roomId, new Date(startTime), new Date(endTime))
+
+    if (isReservated) {
+      throw ApiError("Sala já está agendada nesse horário!", 400)
+    }
+
+    await execute(`insert into reservations (description,user_id,room_id,start_time,end_time) values (?, ?, ?, ?, ?)`, [description, userId, roomId, startTime, endTime])
+
+    response.status(201).send();
   } catch (error) {
     next(error);
+  }
+}
+
+export async function updateReservation(request, response, next) {
+  const { id: userId } = request.user
+  const { id } = request.params
+  try {
+    const { description, roomId, startTime, endTime } = request.body;
+
+    const { isReservated } = await validateReservation(roomId, new Date(startTime), new Date(endTime), id)
+
+    if (isReservated) {
+      throw ApiError("Sala já está agendada nesse horário!", 400)
+    }
+
+    await execute(`update reservations set description = ?,user_id = ?,room_id = ?,start_time = ?,end_time = ? where id = ?`, [description, userId, roomId, startTime, endTime, id])
+
+    response.json();
+  } catch (error) {
+    next(error);
+  }
+}
+
+
+async function validateReservation(roomId, startTime, endTime, id = null) {
+  const reservations = await findAll(`select * from reservations where room_id = ? and start_time < ? and end_time > ?`, [roomId, endTime, startTime])
+
+  return {
+    isReservated: !!reservations.filter(e => e.id !== id).length,
   }
 }
