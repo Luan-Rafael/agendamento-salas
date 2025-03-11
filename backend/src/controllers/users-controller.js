@@ -67,7 +67,6 @@ export async function registerUser(request, response, next) {
     });
 
     response.status(201).json({
-      url: `http://localhost:3001/api/v1/login`,
       token,
     });
   } catch (error) {
