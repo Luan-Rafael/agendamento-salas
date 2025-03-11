@@ -13,7 +13,7 @@
         >
           <q-list>
             <router-link to="/home" custom @click="() => navigate('/home')">
-              <q-item clickable v-ripple :active="$route.path === '/home'">
+              <q-item clickable v-ripple :active="$route.path === '/home'" active-class="text-cyan">
                 <q-item-section avatar>
                   <q-icon name="today" />
                 </q-item-section>
@@ -23,7 +23,12 @@
             </router-link>
 
             <router-link to="/home/rooms" custom @click="() => navigate('/home/rooms')">
-              <q-item clickable v-ripple :active="$route.path === '/home/rooms'">
+              <q-item
+                clickable
+                v-ripple
+                :active="$route.path === '/home/rooms'"
+                active-class="text-cyan"
+              >
                 <q-item-section avatar>
                   <q-icon name="room" />
                 </q-item-section>
@@ -32,7 +37,12 @@
             </router-link>
 
             <router-link to="/home/users" custom @click="() => navigate('/home/users')">
-              <q-item clickable v-ripple :active="$route.path === '/home/users'">
+              <q-item
+                clickable
+                v-ripple
+                :active="$route.path === '/home/users'"
+                active-class="text-cyan"
+              >
                 <q-item-section avatar>
                   <q-icon name="person" />
                 </q-item-section>
@@ -47,6 +57,7 @@
               clickable
               v-ripple
               @click="logout"
+              color="cyan-8"
             >
               <q-item-section avatar>
                 <q-icon name="logout" />
