@@ -6,9 +6,9 @@ import {
 } from "./controllers/users-controller.js";
 import { authHandler } from "./middlewares/auth.js";
 import {
-  createBooking,
+  createReservation,
   createRoom,
-  getBookings,
+  getReservations,
   getRooms,
 } from "./controllers/rooms-controller.js";
 
@@ -23,7 +23,7 @@ router.post("/v1/room", authHandler, createRoom);
 router.get("/v1/users", authHandler, getUsers);
 router.post("/v1/user");
 
-router.get("/v1/bookings", authHandler, getBookings);
-router.post("/v1/booking", authHandler, createBooking);
+router.get("/v1/reservations", authHandler, getReservations);
+router.post("/v1/reservation", authHandler, createReservation);
 
 export { router };
