@@ -1,18 +1,19 @@
 <template>
   <div class="users-page">
     <div class="q-pa-md">
-      <q-table title="Salas" :rows="rows" :columns="columns" row-key="name" />
+      <q-table title="Usuários" :rows="rows" :columns="columns" row-key="name" />
     </div>
   </div>
 </template>
 
-<script setup >
-import { useQuasar} from 'quasar'
+<script setup>
+import { useQuasar } from 'quasar'
 import { api } from 'src/boot/axios'
-import { ref } from 'vue'
+import { inject, ref } from 'vue'
+
+const formatDateTimeToString = inject('formatDateTimeToString')
 
 const $q = useQuasar()
-
 
 const columns = [
   {
@@ -24,18 +25,26 @@ const columns = [
     align: 'left',
   },
   {
-    name: 'createdAt',
+    name: 'email',
     required: true,
-    label: 'Data Registro',
-    field: (row) => row.createdAt,
+    label: 'E-mail',
+    field: (row) => row.email,
     sortable: true,
     align: 'left',
   },
   {
-    name: 'updatedAt',
+    name: 'created_at',
+    required: true,
+    label: 'Data Registro',
+    field: (row) => formatDateTimeToString(row.created_at),
+    sortable: true,
+    align: 'left',
+  },
+  {
+    name: 'update_at',
     required: true,
     label: 'Data Alteração',
-    field: (row) => row.updatedAt,
+    field: (row) => formatDateTimeToString(row.update_at),
     sortable: true,
     align: 'left',
   },
