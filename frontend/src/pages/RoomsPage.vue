@@ -10,9 +10,10 @@
 <script setup>
 import { useQuasar } from 'quasar'
 import { api } from 'src/boot/axios'
-import { ref } from 'vue'
+import { ref, inject } from 'vue'
 import CreateRoomForm from './components/CreateRoomForm.vue'
-import { formatDateToString } from 'src/utils/text'
+
+const formatDateTimeToString = inject('formatDateTimeToString')
 
 const $q = useQuasar()
 
@@ -29,7 +30,7 @@ const columns = [
     name: 'created_at',
     required: true,
     label: 'Data Registro',
-    field: (row) => formatDateToString(row.created_at),
+    field: (row) => formatDateTimeToString(row.created_at),
     sortable: true,
     align: 'left',
   },

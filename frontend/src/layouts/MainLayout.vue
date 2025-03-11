@@ -82,9 +82,13 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { useAuthStore } from '../stores/auth-store'
+import { provide, ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { useAuthStore } from '../stores/auth-store'
+
+import { formatDateTimeToString } from 'src/utils/text'
+
+provide('formatDateTimeToString', formatDateTimeToString)
 
 const router = useRouter()
 const useAuth = useAuthStore()

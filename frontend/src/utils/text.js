@@ -1,8 +1,12 @@
+const THREEHOURSINMILLISECONDS = 60 * 1000 * 60 * 3
+
 export function formatDateTimeToString(value) {
-    const date = new Date(value)
+  const dateValue = new Date(value)
 
-    const formatDate = date.toLocaleDateString('pt-BR');
-    const formatHour = date.toLocaleTimeString('pt-BR', { hour12: false });
+  const date = new Date(dateValue.getTime() - THREEHOURSINMILLISECONDS)
 
-    return `${formatDate} ${formatHour}`
+  const formatDate = date.toLocaleDateString('pt-BR')
+  const formatHour = date.toLocaleTimeString('pt-BR', { hour12: false })
+
+  return `${formatDate} ${formatHour}`
 }
