@@ -5,10 +5,17 @@
         <q-page class="flex flex-center bg-grey-2">
           <q-card class="q-pa-md shadow-2 my_card" bordered>
             <q-card-section class="text-center">
-              <div class="text-grey-9 text-h5 text-weight-bold">SIGN UP</div>
+              <div class="text-cyan-8 text-h5 text-weight-bold">SIGN UP</div>
             </q-card-section>
             <q-card-section>
-              <q-input dense outlined v-model="name" label="Nome" :rules="[rules.userName]">
+              <q-input
+                dense
+                outlined
+                v-model="name"
+                label="Nome"
+                :rules="[rules.userName]"
+                color="cyan-8"
+              >
               </q-input>
               <q-input dense outlined v-model="email" label="E-mail" :rules="[rules.email]">
               </q-input>
@@ -19,13 +26,14 @@
                 type="password"
                 label="Senha"
                 :rules="[rules.required, rules.minLenght]"
+                color="cyan-8"
               >
               </q-input>
             </q-card-section>
             <q-card-section>
               <q-btn
                 style="border-radius: 8px"
-                color="dark"
+                color="cyan-8"
                 rounded
                 size="md"
                 label="Cadastrar"
@@ -37,7 +45,7 @@
             <q-card-section class="text-center q-pt-none">
               <router-link
                 to="/login"
-                class="text-dark text-weight-bold"
+                class="text-cyan-8 text-weight-bold"
                 style="text-decoration: none"
               >
                 Entrar
@@ -86,3 +94,12 @@ async function onReset() {
   password.value = ''
 }
 </script>
+<style scoped>
+.my_card {
+  width: 25rem;
+  border-radius: 8px;
+  box-shadow:
+    0 20px 25px -5px rgb(0 0 0 / 0.1),
+    0 8px 10px -6px rgb(0 0 0 / 0.1);
+}
+</style>

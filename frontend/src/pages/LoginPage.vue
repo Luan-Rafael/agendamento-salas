@@ -5,10 +5,17 @@
         <q-page class="flex flex-center bg-grey-2">
           <q-card class="q-pa-md shadow-2 my_card" bordered>
             <q-card-section class="text-center">
-              <div class="text-grey-9 text-h5 text-weight-bold">LOGIN</div>
+              <div class="text-cyan-8 text-h5 text-weight-bold">LOGIN</div>
             </q-card-section>
             <q-card-section>
-              <q-input dense outlined v-model="email" label="Email Address" :rules="[rules.email]">
+              <q-input
+                dense
+                outlined
+                v-model="email"
+                label="Email Address"
+                :rules="[rules.email]"
+                color="cyan-8"
+              >
               </q-input>
               <q-input
                 dense
@@ -17,13 +24,14 @@
                 type="password"
                 label="Password"
                 :rules="[rules.required, rules.minLenght]"
+                color="cyan-8"
               >
               </q-input>
             </q-card-section>
             <q-card-section>
               <q-btn
                 style="border-radius: 8px"
-                color="dark"
+                color="cyan-8"
                 rounded
                 size="md"
                 label="Entrar"
@@ -35,7 +43,7 @@
             <q-card-section class="text-center q-pt-none">
               <router-link
                 to="/signup"
-                class="text-dark text-weight-bold"
+                class="text-cyan-8 text-weight-bold"
                 style="text-decoration: none"
               >
                 Cadastrar
@@ -75,7 +83,7 @@ async function onSubmit() {
     })
 }
 </script>
-<style>
+<style scoped>
 .my_card {
   width: 25rem;
   border-radius: 8px;
