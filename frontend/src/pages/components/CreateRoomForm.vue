@@ -20,7 +20,7 @@
   </q-dialog>
   <q-btn style="margin-left: auto;" @click="() => openDialog({ isOpen: true })" color="cyan-8" rounded size="md">
     Nova Sala
-    <q-icon name="add" />
+    <q-icon class="q-ml-xs"  name="add" />
   </q-btn>
 </template>
 
