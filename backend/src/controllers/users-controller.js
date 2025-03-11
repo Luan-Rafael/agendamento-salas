@@ -1,4 +1,4 @@
-import { execute, find } from "../db/exec.js";
+import { execute, find, findAll } from "../db/exec.js";
 import { ApiError } from "../utils/api-error.js";
 import { hashPassword, validatePassword } from "../utils/bcrypt.js";
 import { generateToken } from "../utils/jwt.js";
@@ -40,7 +40,7 @@ export async function login(request, response, next) {
 }
 
 export async function registerUser(request, response, next) {
-  const { name, email, password } = request.body; 
+  const { name, email, password } = request.body;
 
   try {
     if (!(name && email && password)) {
@@ -70,6 +70,15 @@ export async function registerUser(request, response, next) {
       url: `http://localhost:3001/api/v1/login`,
       token,
     });
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function getUsers(request, response, next) {
+  try {
+    const users = await findAll(`select * from users;`);
+    response.json({ users });
   } catch (error) {
     next(error);
   }
