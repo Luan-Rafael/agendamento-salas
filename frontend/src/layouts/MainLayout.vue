@@ -98,8 +98,11 @@ import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/auth-store'
 
 import { formatDateTimeToString } from 'src/utils/text'
+import rules from 'src/utils/rules'
 
 provide('formatDateTimeToString', formatDateTimeToString)
+
+provide('rules', rules)
 
 const router = useRouter()
 const useAuth = useAuthStore()
