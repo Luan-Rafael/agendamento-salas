@@ -1,17 +1,30 @@
 <template>
-    <div class="home-page">
-        <h1>Welcome to the Home Page</h1>
-        <br>
-        <p>This is the home page of your application.</p>
+    <div class="flex column">
+        <create-room-reservation-form @refresh="fetchReservations"/>
+        {{ rows }}
     </div>
 </template>
 
 <script setup>
-</script>
+import CreateRoomReservationForm from './components/CreateRoomReservationForm.vue'
+import { useQuasar } from 'quasar'
+import { api } from 'src/boot/axios'
+import { ref } from 'vue'
+const $q = useQuasar()
+const rows = ref([])
 
-<style scoped>
-.home-page {
-    text-align: center;
-    margin-top: 50px;
+const fetchReservations = async () => {
+    const response = await api.get('/v1/reservations').catch((error) => {
+        $q.notify({
+            message: error.message,
+            color: 'negative',
+            position: 'bottom',
+            timeout: 1000,
+        })
+    })
+    const { reservations } = response.data
+    rows.value = reservations
 }
-</style>
+
+fetchReservations()
+</script>
