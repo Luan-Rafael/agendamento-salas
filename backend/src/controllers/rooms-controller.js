@@ -70,7 +70,12 @@ export async function getReservations(request, response, next) {
       params
     );
 
-    response.json({ reservations });
+    response.json({
+      reservations: reservations.map((reservation) => ({
+        ...reservation,
+        edit: reservation.user_id === userId,
+      })),
+    });
   } catch (error) {
     next(error);
   }
