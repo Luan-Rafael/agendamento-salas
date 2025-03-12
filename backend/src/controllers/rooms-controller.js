@@ -73,7 +73,7 @@ export async function getReservations(request, response, next) {
               join users on users.id = reservations.user_id 
       `,
       params
-    );
+    ); 
 
     response.json({
       reservations: reservations.map((reservation) => ({
@@ -90,8 +90,8 @@ export async function createReservation(request, response, next) {
   try {
     const { id: userId } = request.user;
     const { description, date, roomId, startTime, endTime } = request.body;
-    console.log(request.body);
-
+   
+  
     const { isReservated } = await validateReservation({
       roomId,
       date,
@@ -120,23 +120,21 @@ export async function createReservation(request, response, next) {
 
 export async function updateReservation(request, response, next) {
   const { id: userId } = request.user;
-  const { id } = request.params;
+  const { id } = request.params; 
   try {
-    const { description, roomId, date, startTime, endTime } = request.body;
+    const { description, roomId, date, startTime, endTime } = request.body; 
 
     const reservation = await find(
       `select user_id from reservations where id = ?;`,
       [id]
-    );
-
+    ); 
     if (!reservation) {
       throw new ApiError("Reserva não encontrada", 400);
     }
 
     if (reservation.user_id !== userId) {
       throw new ApiError("Não possui permissão para alterar a reserva", 400);
-    }
-
+    } 
     const { isReservated } = await validateReservation({
       roomId,
       date,
@@ -146,7 +144,7 @@ export async function updateReservation(request, response, next) {
     });
 
     if (isReservated) {
-      throw ApiError("Sala já está agendada nesse horário!", 400);
+      throw new ApiError("Sala já está agendada nesse horário!", 400);
     }
 
     await saveReservation(
@@ -160,6 +158,30 @@ export async function updateReservation(request, response, next) {
   }
 }
 
+export async function deleteReservation(request,response,next) {
+  const {id: userId} = request.user
+  const {id} = request.params
+  try {
+    const reservation = await find(
+      `select user_id from reservations where id = ?;`,
+      [id]
+    ); 
+    if (!reservation) {
+      throw new ApiError("Reserva não encontrada", 400);
+    }
+
+    if (reservation.user_id != userId) {
+      throw new ApiError("Não possui permissão para alterar a reserva", 400);
+    } 
+    await execute("delete from reservations where id = ?;", [id])
+
+    response.end();
+  } catch (error) {
+    next(error)
+  }
+}
+
+
 async function validateReservation({
   roomId,
   date,
@@ -167,24 +189,18 @@ async function validateReservation({
   endTime,
   id = null,
 }) {
-  const startDate = new Date(`${date}T${startTime}:00`);
-  const endDate = new Date(`${date}T${endTime}:00`);
-
-  const formattedStartDate = startDate
-    .toISOString()
-    .slice(0, 19)
-    .replace("T", " ");
-
-  const formattedEndDate = endDate.toISOString().slice(0, 19).replace("T", " ");
-
+  const formattedStartDate =   `${date} ${startTime}:00` 
+  const formattedEndDate = `${date} ${endTime}:00`
+  
   const reservations = await findAll(
     `select * from reservations where room_id = ? and start_time < ? and end_time > ?;`,
     [roomId, formattedEndDate, formattedStartDate]
-  );
+  ); 
+
 
   return {
-    isReservated: !!reservations.filter((e) => e.id !== id).length,
-    conflictingReservations: reservations.filter((e) => e.id !== id),
+    isReservated: reservations.some((e) => e.id != id),
+    conflictingReservations: reservations.filter((e) => e.id != id),
   };
 }
 
@@ -192,21 +208,15 @@ async function saveReservation(
   { description, userId, roomId, date, startTime, endTime },
   id = null
 ) {
-  const startDate = new Date(`${date}T${startTime}:00`);
-  const endDate = new Date(`${date}T${endTime}:00`);
-
-  const formattedStartDate = startDate
-    .toISOString()
-    .slice(0, 19)
-    .replace("T", " ");
-
-  const formattedEndDate = endDate.toISOString().slice(0, 19).replace("T", " ");
-
+  const formattedStartDate =   `${date} ${startTime}:00` 
+  const formattedEndDate = `${date} ${endTime}:00`
+  
   if (id) {
-    await execute(
+   await execute(
       `update reservations set description = ?,room_id = ?,start_time = ?,end_time = ? where id = ?`,
       [description, roomId, formattedStartDate, formattedEndDate, id]
     );
+ 
     return;
   }
 
