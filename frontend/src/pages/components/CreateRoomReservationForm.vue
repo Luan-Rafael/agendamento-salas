@@ -63,9 +63,8 @@ import { api } from 'src/boot/axios'
 import CustomInputTime from 'src/components/CustomInputTime.vue'
 import { onMounted, reactive, ref, inject, computed } from 'vue'
 
+const props = defineProps(['modelValue'])
 const rules = inject('rules')
-
-const emit = defineEmits('refresh')
 
 const $q = useQuasar()
 const optionRooms = ref([])
@@ -90,6 +89,7 @@ const model = reactive({
   startTime: null,
   endTime: null,
   isLoading: false,
+  ...props.model,
 })
 
 function openDialog({ isOpen = false }) {
@@ -100,7 +100,7 @@ async function onSubmit() {
   model.isLoading = true
 
   await api
-    .post('/v1/reservation', {
+    .post('/v1/reservation/' + (model.id || ''), {
       description: model.description,
       roomId: model.room.value,
       date: model.date,
@@ -125,7 +125,7 @@ async function onSubmit() {
       })
     })
     .finally(() => {
-      emit('refresh')
+      model.isLoading = false
     })
 }
 
