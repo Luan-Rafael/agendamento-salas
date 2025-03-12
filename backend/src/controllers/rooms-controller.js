@@ -58,22 +58,27 @@ export async function getReservations(request, response, next) {
 
     const user = await find(`select * from users where id = ?`, [userId]);
 
-    let where = "";
     const params = [];
-    if (user.role !== "admin") {
-      where = "where user_id = ?";
-      params.push(userId);
-    }
 
     const reservations = await findAll(
-      `select * from reservations ${where}`,
+      `
+      select reservations.id,
+             reservations.description,
+             reservations.start_time as startTime,
+             reservations.end_time as endTime,
+             rooms.name as room,
+             users.name as user
+      from   reservations
+              join rooms on rooms.id = reservations.room_id
+              join users on users.id = reservations.user_id 
+      `,
       params
     );
 
     response.json({
       reservations: reservations.map((reservation) => ({
         ...reservation,
-        edit: reservation.user_id === userId,
+        edit: reservation.userId === user.id,
       })),
     });
   } catch (error) {
