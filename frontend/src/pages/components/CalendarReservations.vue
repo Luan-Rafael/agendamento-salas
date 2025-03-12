@@ -8,13 +8,7 @@
           class="my-event"
           :class="badgeClasses(event, 'body')"
           :style="badgeStyles(event, 'body', timeStartPos, timeDurationHeight)"
-          @dblclick="
-            () => {
-              if (event.edit) {
-                emit('openReservationForm', event)
-              }
-            }
-          "
+          @dblclick="() => openReservation(event)"
         >
           <div class="title q-calendar__ellipsis">
             {{ event.title }}
@@ -27,7 +21,7 @@
 </template>
 
 <script setup>
-import { computed, onMounted, ref } from 'vue'
+import { computed,  ref } from 'vue'
 import {
   addToDate,
   isBetweenDates,
@@ -36,51 +30,22 @@ import {
   parseTimestamp,
   QCalendar,
 } from '@quasar/quasar-ui-qcalendar'
-import '@quasar/quasar-ui-qcalendar/index.css'
-import { api } from 'src/boot/axios'
-import { useQuasar, date } from 'quasar'
+import '@quasar/quasar-ui-qcalendar/index.css' 
+import {   date } from 'quasar'
 import NavigationBar from './NavigationBar.vue'
-const $q = useQuasar()
 const calendar = ref()
-const props = defineProps(['view'])
+const props = defineProps(['view', 'reservations'])
 const emit = defineEmits(['openReservationForm'])
 
-const reservations = ref([])
 const currentDate = ref(date.formatDate(new Date(), 'YYYY-MM-DD'))
-
-const fetchReservations = async () => {
-  const response = await api.get('/v1/reservations').catch((error) => {
-    $q.notify({
-      message: error.message,
-      color: 'negative',
-      position: 'bottom',
-      timeout: 1000,
-    })
-  })
-  const { reservations: data } = response.data
-
-  reservations.value = data.map((reservation, index) => {
-    const colors = ['#00cbcc', '#00e5e5', '#00ffff', '#2196f3', '#6bbef9']
-    const startDate = new Date(reservation.startTime)
-    const endDate = new Date(reservation.endTime)
-    const durationInMinutes = Math.floor((endDate - startDate) / 60000)
-    return {
-      id: reservation.id,
-      title: `${reservation.description} - ${reservation.room}`,
-      description: reservation.room,
-      date: parseTimestamp(reservation.startTime).date,
-      time: `${parseTimestamp(reservation.startTime).hour.toString().padStart(2, '0')}:${parseTimestamp(reservation.startTime).minute.toString().padStart(2, '0')}`,
-      startTime: `${parseTimestamp(reservation.startTime).hour.toString().padStart(2, '0')}:${parseTimestamp(reservation.startTime).minute.toString().padStart(2, '0')}`,
-      endTime: `${parseTimestamp(reservation.endTime).hour.toString().padStart(2, '0')}:${parseTimestamp(reservation.endTime).minute.toString().padStart(2, '0')}`,
-      duration: durationInMinutes,
-      bgcolor: colors[index % colors.length],
-      edit: reservation.edit,
-    }
-  })
+ 
+function openReservation( reservation){ 
+  emit('openReservationForm', reservation)
 }
+
 const reservationsMap = computed(() => {
   const map = {}
-  reservations.value.forEach((event) => {
+  props.reservations.forEach((event) => {
     if (!map[event.date]) {
       map[event.date] = []
     }
@@ -173,31 +138,8 @@ function onNext() {
     calendar.value.next()
   }
 }
+ 
 
-// function onMoved(data) {
-//   console.info('onMoved', data)
-// }
-// function onChange(data) {
-//   console.info('onChange', data)
-// }
-// function onClickDate(data) {
-//   console.info('onClickDate', data)
-// }
-// function onClickTime(data) {
-//   console.info('onClickTime', data)
-// }
-// function onClickInterval(data) {
-//   console.info('onClickInterval', data)
-// }
-// function onClickHeadIntervals(data) {
-//   console.info('onClickHeadIntervals', data)
-// }
-// function onClickHeadDay(data) {
-//   console.info('onClickHeadDay', data)
-// }
-onMounted(async () => {
-  await fetchReservations()
-})
 </script>
 <style lang="scss" scoped>
 .my-event {

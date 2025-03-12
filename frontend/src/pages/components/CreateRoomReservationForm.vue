@@ -1,5 +1,4 @@
-<template>
-  <q-dialog v-model="model.open" persistent>
+<template>  
     <q-card class="card-form">
       <q-card-section>
         <div class="text-h6">Agendar uma sala</div>
@@ -34,6 +33,15 @@
         <q-card-actions class="flex q-mt-xs">
           <q-btn class="w-full" label="cancelar" @click="onReset" color="grey" v-close-popup />
           <q-space />
+          
+          <q-btn
+           v-if="props.id"
+            class="w-full"
+            color="red-8"
+            label="Deletar"
+            @click="deleteReservation"
+            :loading="model.isLoading"
+          />
           <q-btn
             class="w-full"
             color="cyan-8"
@@ -43,18 +51,8 @@
           />
         </q-card-actions>
       </q-form>
-    </q-card>
-  </q-dialog>
-  <q-btn
-    style="margin-left: auto"
-    @click="() => openDialog({ isOpen: true })"
-    color="cyan-8"
-    rounded
-    size="md"
-  >
-    <span v-if="$q.screen.gt.xs" class="q-mr-xs">Novo Agendamento</span>
-    <q-icon name="today" />
-  </q-btn>
+    </q-card> 
+ 
 </template>
 
 <script setup>
@@ -62,45 +60,88 @@ import { useQuasar } from 'quasar'
 import { api } from 'src/boot/axios'
 import CustomInputTime from 'src/components/CustomInputTime.vue'
 import { onMounted, reactive, ref, inject, computed } from 'vue'
-
-const props = defineProps(['modelValue'])
+ 
 const rules = inject('rules')
 
 const $q = useQuasar()
+const props = defineProps(['id', 'description', 'roomId','date','startTime','endTime'])
+
 const optionRooms = ref([])
 
-const isToday = computed(() => {
-  if (!model.date) {
-    return true
-  }
-  const now = new Date()
-  const date = new Date(`${model.date}T00:00:00`)
-  now.setHours(0, 0, 0, 0)
+const emit = defineEmits(['closeDialog', 'refresh'])
 
-  return now.getTime() == date.getTime()
-})
-
-const model = reactive({
-  open: false,
+const model = reactive({ 
   id: null,
-  description: '',
+  description:  null,
   room: null,
-  date: null,
+  date:  null,
   startTime: null,
-  endTime: null,
-  isLoading: false,
-  ...props.model,
+  endTime:  null,
+  isLoading: false, 
 })
 
-function openDialog({ isOpen = false }) {
-  model.open = isOpen
+async function deleteReservation() {
+  await api
+    .delete(`v1/reservation/${props.id}`)
+    .then(() => {
+      $q.notify({
+        message: 'Agendamento excluído com sucesso',
+        color: 'cyan-8',
+        position: 'bottom',
+        timeout: 1000,
+      })
+      onReset()
+    })
+    .catch((error) => {
+      $q.notify({
+        message: error.message,
+        color: 'warning',
+        position: 'bottom',
+        timeout: 1000,
+      })
+    })
+    .finally(() => {
+      model.isLoading = false
+    })
 }
+
 
 async function onSubmit() {
   model.isLoading = true
 
+  if(props.id){
+    await api
+    .put(`v1/reservation/${props.id}`, {
+      description: model.description,
+      roomId: model.room.value,
+      date: model.date,
+      startTime: model.startTime,
+      endTime: model.endTime,
+    }).then(() => {
+      $q.notify({
+        message: 'Agendamento alterado com sucesso',
+        color: 'cyan-8',
+        position: 'bottom',
+        timeout: 1000,
+      })
+      onReset()
+    })
+    .catch((error) => {
+      $q.notify({
+        message: error.message,
+        color: 'warning',
+        position: 'bottom',
+        timeout: 1000,
+      })
+    })
+    .finally(() => {
+      model.isLoading = false
+    })
+
+    return 
+  }
   await api
-    .post('/v1/reservation/' + (model.id || ''), {
+    .post('/v1/reservation', {
       description: model.description,
       roomId: model.room.value,
       date: model.date,
@@ -129,8 +170,7 @@ async function onSubmit() {
     })
 }
 
-function onReset() {
-  model.open = false
+function onReset() { 
   model.id = null
   model.description = ''
   model.room = null
@@ -138,12 +178,37 @@ function onReset() {
   model.startTime = null
   model.endTime = null
   model.isLoading = false
+  emit('closeDialog')
+  emit('refresh')
 }
+
+const isToday = computed(() => {
+  if (!model.date) {
+    return true
+  }
+  const now = new Date()
+  const date = new Date(`${model.date}T00:00:00`)
+  now.setHours(0, 0, 0, 0)
+
+  return now.getTime() == date.getTime()
+})
+
 
 onMounted(async () => {
   const response = await api.get('/v1/rooms')
   const { rooms } = response.data
   optionRooms.value = rooms.map((e) => ({ label: e.name, value: e.id }))
+
+
+  if(props.id){
+    model.id = props.id
+    model.description = props.description;
+    model.room = optionRooms.value.find(room =>room.id == props.roomId);
+    model.date = props.date;
+    model.startTime = props.startTime
+    model.endTime = props.endTime
+  }
+ 
 })
 </script>
 <style scoped>
