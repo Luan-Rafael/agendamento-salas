@@ -61,17 +61,17 @@ const fetchReservations = async () => {
 
   reservations.value = data.map((reservation, index) => {
     const colors = ['#00cbcc', '#00e5e5', '#00ffff', '#2196f3', '#6bbef9']
-    const startDate = new Date(reservation.start_time)
-    const endDate = new Date(reservation.end_time)
+    const startDate = new Date(reservation.startTime)
+    const endDate = new Date(reservation.endTime)
     const durationInMinutes = Math.floor((endDate - startDate) / 60000)
     return {
       id: reservation.id,
-      title: reservation.description,
-      details: '',
-      date: parseTimestamp(reservation.start_time).date,
-      time: `${parseTimestamp(reservation.start_time).hour.toString().padStart(2, '0')}:${parseTimestamp(reservation.start_time).minute.toString().padStart(2, '0')}`,
-      startTime: `${parseTimestamp(reservation.start_time).hour.toString().padStart(2, '0')}:${parseTimestamp(reservation.start_time).minute.toString().padStart(2, '0')}`,
-      endTime: `${parseTimestamp(reservation.end_time).hour.toString().padStart(2, '0')}:${parseTimestamp(reservation.end_time).minute.toString().padStart(2, '0')}`,
+      title: `${reservation.description} - ${reservation.room}`,
+      description: reservation.room,
+      date: parseTimestamp(reservation.startTime).date,
+      time: `${parseTimestamp(reservation.startTime).hour.toString().padStart(2, '0')}:${parseTimestamp(reservation.startTime).minute.toString().padStart(2, '0')}`,
+      startTime: `${parseTimestamp(reservation.startTime).hour.toString().padStart(2, '0')}:${parseTimestamp(reservation.startTime).minute.toString().padStart(2, '0')}`,
+      endTime: `${parseTimestamp(reservation.endTime).hour.toString().padStart(2, '0')}:${parseTimestamp(reservation.endTime).minute.toString().padStart(2, '0')}`,
       duration: durationInMinutes,
       bgcolor: colors[index % colors.length],
       edit: reservation.edit,
@@ -215,6 +215,8 @@ onMounted(async () => {
   display: flex;
   justify-content: center;
   align-items: center;
+  font-weight: bold;
+  color: black;
   height: 100%;
 }
 
