@@ -6,41 +6,53 @@
       outlined
       dense
       options-dense
-      :options="['Diário', 'Mensal']"
+      item-value
+      :options="optionsCalendar"
       style="min-width: 180px"
     />
-
-    <create-room-reservation-form @refresh="fetchReservations" />
-    <div style="display: flex; width: 100%; max-height: calc(100vh - 9rem)">
-      <q-calendar ref="calendar"></q-calendar>
+    <create-room-reservation-form :modelValue="dialogReservationForm" />
+    <div
+      style="display: flex; flex-direction: column; width: 100%; max-height: calc(100vh - 10rem)"
+    >
+      <calendar-reservations
+        :view="selectedCalendar.value"
+        @openReservationForm="openReservationForm"
+      ></calendar-reservations>
     </div>
   </div>
 </template>
 
 <script setup>
-import CreateRoomReservationForm from './components/CreateRoomReservationForm.vue'
-import { QCalendar } from '@quasar/quasar-ui-qcalendar'
-import { useQuasar } from 'quasar'
-import { api } from 'src/boot/axios'
 import { ref } from 'vue'
-const $q = useQuasar()
-const rows = ref([])
+import CreateRoomReservationForm from './components/CreateRoomReservationForm.vue'
+import CalendarReservations from './components/CalendarReservations.vue'
 
-const selectedCalendar = ref('Diário')
-const calendar = ref()
+const optionsCalendar = [
+  {
+    label: 'Diário',
+    value: 'day',
+  },
+  {
+    label: 'Semanal',
+    value: 'week',
+  },
+  {
+    label: 'Mensal',
+    value: 'month',
+  },
+]
+const selectedCalendar = ref(optionsCalendar[0])
 
-const fetchReservations = async () => {
-  const response = await api.get('/v1/reservations').catch((error) => {
-    $q.notify({
-      message: error.message,
-      color: 'negative',
-      position: 'bottom',
-      timeout: 1000,
-    })
-  })
-  const { reservations } = response.data
-  rows.value = reservations
+const dialogReservationForm = ref({})
+
+function openReservationForm({ id, description, startTime, endTime, date }) {
+  dialogReservationForm.value = {
+    open: true,
+    id,
+    description,
+    startTime,
+    endTime,
+    date,
+  }
 }
-
-fetchReservations()
 </script>
