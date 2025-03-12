@@ -109,7 +109,7 @@ async function onSubmit() {
     })
     .then(() => {
       $q.notify({
-        message: 'Registro salvo com sucesso',
+        message: 'Agendamento realizado com sucesso',
         color: 'cyan-8',
         position: 'bottom',
         timeout: 1000,
@@ -119,7 +119,7 @@ async function onSubmit() {
     .catch((error) => {
       $q.notify({
         message: error.message,
-        color: 'negative',
+        color: 'warning',
         position: 'bottom',
         timeout: 1000,
       })
