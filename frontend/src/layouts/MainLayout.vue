@@ -78,7 +78,6 @@
               <img src="https://cdn.quasar.dev/img/boy-avatar.png" />
             </q-avatar>
             <div class="text-weight-bold">{{ useAuth.userName }}</div>
-            <div>@rstoenescu</div>
           </div>
         </q-img>
       </q-drawer>
