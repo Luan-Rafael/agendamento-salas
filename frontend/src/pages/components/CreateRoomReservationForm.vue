@@ -52,8 +52,8 @@
     rounded
     size="md"
   >
-    Novo Agendamento
-    <q-icon class="q-ml-xs" name="today" />
+    <span v-if="$q.screen.gt.xs" class="q-mr-xs">Novo Agendamento</span>
+    <q-icon name="today" />
   </q-btn>
 </template>
 
