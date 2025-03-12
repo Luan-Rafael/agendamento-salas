@@ -2,7 +2,7 @@
 
 ## Introdução
 
-Este é um sistema de agendamento de salas de reunião desenvolvido como parte de um teste técnico. Ele permite que os usuários façam login (simulado), reservem salas para reuniões, visualizem agendamentos em um calendário interativo e cancelem suas próprias reservas.
+Este sistema de agendamento de salas de reunião foi criado como parte de um teste técnico. Ele oferece aos usuários a possibilidade de realizar login, se cadastrar, agendar salas para reuniões, visualizar os agendamentos em um calendário interativo e cancelar suas reservas quando necessário.
 
 ## Tecnologias Utilizadas
 
@@ -14,6 +14,7 @@ Este é um sistema de agendamento de salas de reunião desenvolvido como parte d
 ## Funcionalidades Principais
 
 - **Login de Usuário** Autenticação via JWT para garantir acesso seguro.
+- **Cadastro de Usuário** Permite o registro de novos usuários no sistema.
 - **Listagem de Salas Disponíveis** para agendamento.
 - **Agendamento de Reunião**, escolhendo:
   - Sala desejada.
@@ -27,6 +28,12 @@ Este é um sistema de agendamento de salas de reunião desenvolvido como parte d
 - **Listagem de Reuniões Agendadas**.
 - **Visualização de Agendamentos em um Calendário Interativo**.
 - **Cancelamento de Reuniões** (restrito ao criador da reserva).
+
+## Requisitos
+
+Para executar este projeto localmente, você precisa ter os seguintes requisitos instalados:
+
+- Node.js (versão 18 ou superior) - [Instalar Node](https://nodejs.org/pt)
 
 ## Como Rodar o Projeto Localmente
 
@@ -68,6 +75,16 @@ cd frontend
 npm install
 npm run dev
 ```
+
+### 4. Usuário Padrão Criado Automaticamente:
+
+Ao iniciar o backend, um usuário padrão foi criado automaticamente no banco de dados para facilitar os testes e a verificação de funcionalidades.
+
+Credenciais do Usuário Padrão:
+
+- Nome de Usuário: admin
+- E-mail: admin@gmail.com
+- Senha: 123456
 
 ## Estrutura do Código
 
