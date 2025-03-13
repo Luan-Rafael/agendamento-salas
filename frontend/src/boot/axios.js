@@ -19,27 +19,31 @@ export default defineBoot(({ app , router}) => {
     response => response,
    async  (error) => {
       const useAuth = useAuthStore()
-
+        let message = 'Erro desconhecido'
+        
       if (axios.isAxiosError(error) && error.response) {
         switch (error.response.status) {
           case 400:
+            message = 'Requisição inválida'
             console.error("Erro 400: Requisição inválida");
             break;
           case 401:
             case 403:
+            message = 'Não autorizado'
             console.error("Erro 401: Não autorizado");
             useAuth.logout()
             router.push('/login')
             break;
           case 500:
+            message = 'Erro interno no servidor'
             console.error("Erro 500: Erro interno no servidor");
             break;
-          default:
-            console.error("Erro desconhecido:", error.response.data.message);
+          default: 
+            console.error("Erro desconhecido:", error.response?.data?.message);
         }
       }
 
-      return Promise.reject(error.response.data); // Rejeita a promise para que o erro possa ser tratado onde a requisição for chamada
+      return Promise.reject({message}); // Rejeita a promise para que o erro possa ser tratado onde a requisição for chamada
     }
   );
 
