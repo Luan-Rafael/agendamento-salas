@@ -43,7 +43,7 @@ export default defineBoot(({ app , router}) => {
         }
       }
 
-      return Promise.reject({message: error.response?.data?.message ?? message}); // Rejeita a promise para que o erro possa ser tratado onde a requisição for chamada
+      return Promise.reject({message: error.response?.data?.message ?? message});
     }
   );
 
