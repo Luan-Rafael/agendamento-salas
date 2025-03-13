@@ -105,14 +105,9 @@ function openDialog({  id=null, description=null, startTime=null, endTime=null, 
 const reservations = ref([])
 
 const fetchReservations = async () => {
-  const response = await api.get('/v1/reservations').catch((error) => {
-    $q.notify({
-      message: error.message,
-      color: 'negative',
-      position: 'bottom',
-      timeout: 1000,
-    })
-  })
+  try {
+  const response = await api.get('/v1/reservations')
+
   const { reservations: data } = response.data
 
   reservations.value = data.map((reservation, index) => {
@@ -135,6 +130,16 @@ const fetchReservations = async () => {
       edit: reservation.edit,
     }
   })
+
+} catch (error) {
+    $q.notify({
+      message: error.message,
+      color: 'negative',
+      position: 'bottom',
+      timeout: 1000,
+    })
+  
+}
 }
 
 onMounted(async () => {
