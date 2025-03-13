@@ -67,13 +67,14 @@ export async function getReservations(request, response, next) {
              reservations.start_time as startTime,
              reservations.end_time as endTime,
              rooms.name as room,
-             users.name as user
+             users.name as user,
+             reservations.room_id as roomId
       from   reservations
               join rooms on rooms.id = reservations.room_id
               join users on users.id = reservations.user_id 
       `,
       params
-    ); 
+    );
 
     response.json({
       reservations: reservations.map((reservation) => ({
@@ -90,8 +91,8 @@ export async function createReservation(request, response, next) {
   try {
     const { id: userId } = request.user;
     const { description, date, roomId, startTime, endTime } = request.body;
-   
-  
+
+
     const { isReservated } = await validateReservation({
       roomId,
       date,
@@ -120,21 +121,21 @@ export async function createReservation(request, response, next) {
 
 export async function updateReservation(request, response, next) {
   const { id: userId } = request.user;
-  const { id } = request.params; 
+  const { id } = request.params;
   try {
-    const { description, roomId, date, startTime, endTime } = request.body; 
+    const { description, roomId, date, startTime, endTime } = request.body;
 
     const reservation = await find(
       `select user_id from reservations where id = ?;`,
       [id]
-    ); 
+    );
     if (!reservation) {
       throw new ApiError("Reserva não encontrada", 400);
     }
 
     if (reservation.user_id !== userId) {
       throw new ApiError("Não possui permissão para alterar a reserva", 400);
-    } 
+    }
     const { isReservated } = await validateReservation({
       roomId,
       date,
@@ -158,21 +159,21 @@ export async function updateReservation(request, response, next) {
   }
 }
 
-export async function deleteReservation(request,response,next) {
-  const {id: userId} = request.user
-  const {id} = request.params
+export async function deleteReservation(request, response, next) {
+  const { id: userId } = request.user
+  const { id } = request.params
   try {
     const reservation = await find(
       `select user_id from reservations where id = ?;`,
       [id]
-    ); 
+    );
     if (!reservation) {
       throw new ApiError("Reserva não encontrada", 400);
     }
 
     if (reservation.user_id != userId) {
       throw new ApiError("Não possui permissão para alterar a reserva", 400);
-    } 
+    }
     await execute("delete from reservations where id = ?;", [id])
 
     response.end();
@@ -189,13 +190,13 @@ async function validateReservation({
   endTime,
   id = null,
 }) {
-  const formattedStartDate =   `${date} ${startTime}:00` 
+  const formattedStartDate = `${date} ${startTime}:00`
   const formattedEndDate = `${date} ${endTime}:00`
-  
+
   const reservations = await findAll(
     `select * from reservations where room_id = ? and start_time < ? and end_time > ?;`,
     [roomId, formattedEndDate, formattedStartDate]
-  ); 
+  );
 
 
   return {
@@ -208,15 +209,15 @@ async function saveReservation(
   { description, userId, roomId, date, startTime, endTime },
   id = null
 ) {
-  const formattedStartDate =   `${date} ${startTime}:00` 
+  const formattedStartDate = `${date} ${startTime}:00`
   const formattedEndDate = `${date} ${endTime}:00`
-  
+
   if (id) {
-   await execute(
+    await execute(
       `update reservations set description = ?,room_id = ?,start_time = ?,end_time = ? where id = ?`,
       [description, roomId, formattedStartDate, formattedEndDate, id]
     );
- 
+
     return;
   }
 
