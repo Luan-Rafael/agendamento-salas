@@ -3,9 +3,12 @@ import { hashPassword } from "../utils/bcrypt.js";
 import fs from 'node:fs'
 
 const existDataBase = fs.existsSync('./DATABASE.db')
- 
-if(!existDataBase) {
-  fs.writeFileSync('./DATABASE.db', '')
+
+const createRooms = []
+
+if (!existDataBase) {
+  fs.writeFileSync('./DATABASE.db', '');
+  createRooms.push("Sala 1", "Sala 2")
 }
 
 const db = new sqlite.Database("./DATABASE.db", sqlite.OPEN_READWRITE);
@@ -67,6 +70,14 @@ const createTables = () => {
       SELECT ?, ?, ?, ?
       WHERE NOT EXISTS (SELECT 1 FROM users WHERE email = ?);
     `, [userAdmin.name, userAdmin.email, password, userAdmin.role, userAdmin.email]);
+
+    for (let index = 0; index < createRooms.length; index++) {
+      db.run(`
+        INSERT INTO rooms (name, user_id)
+        VALUES(?, ?);
+      `, [createRooms[index], 1]);
+    }
+
 
     console.log(
       'Tabelas ["users", "rooms", "reservations"] criadas ou já existentem.'
