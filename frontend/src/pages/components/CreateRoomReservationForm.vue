@@ -8,7 +8,8 @@
           <q-select
             v-model="model.room"
             :options="optionRooms"
-            label="Sala"
+            
+           label="Sala"
             :rules="[rules.required]"
           />
           <q-input v-model="model.description" label="Descrição" :rules="[rules.required]" />
@@ -197,19 +198,21 @@ const isToday = computed(() => {
 onMounted(async () => {
   const response = await api.get('/v1/rooms')
   const { rooms } = response.data
-  optionRooms.value = rooms.map((e) => ({ label: e.name, value: e.id }))
-
-
+  optionRooms.value = [...rooms.map((e) => ({ label: e.name, value: e.id }))]
+  
+  
   if(props.id){
+    const value = optionRooms.value.find(room => room.value === props.roomId);
     model.id = props.id
-    model.description = props.description;
-    model.room = optionRooms.value.find(room =>room.id == props.roomId);
+    model.description = props.description; 
     model.date = props.date;
     model.startTime = props.startTime
     model.endTime = props.endTime
+    model.room = {...value}
   }
  
 })
+
 </script>
 <style scoped>
 .card-form {
