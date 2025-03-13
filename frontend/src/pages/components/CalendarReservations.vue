@@ -1,6 +1,6 @@
 <template>
   <navigation-bar @today="onToday" @prev="onPrev" @next="onNext" />
-  <q-calendar ref="calendar" v-model="currentDate" :view="props.view" :hour24-format="true">
+  <q-calendar ref="calendar" locale="pt-BR" v-model="currentDate" :view="props.view" :hour24-format="true">
     <template #day-body="{ scope: { timestamp, timeStartPos, timeDurationHeight } }">
       <template v-for="event in getReservations(timestamp.date)" :key="event.id">
         <div
@@ -31,7 +31,7 @@ import {
   QCalendar,
 } from '@quasar/quasar-ui-qcalendar'
 import '@quasar/quasar-ui-qcalendar/index.css' 
-import {   date } from 'quasar'
+import { date } from 'quasar'
 import NavigationBar from './NavigationBar.vue'
 const calendar = ref()
 const props = defineProps(['view', 'reservations'])
@@ -103,7 +103,7 @@ function badgeStyles(event, _type, timeStartPos = null, timeDurationHeight = nul
   return s
 }
 
-function getReservations(dt) {
+function getReservations(dt) { 
   const events = reservationsMap.value[dt] || []
 
   if (events.length === 1 && events[0]) {
