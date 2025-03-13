@@ -25,7 +25,7 @@
         <create-room-reservation-form  @refresh="fetchReservations" @closeDialog="closeDialog"  
           :id="dialog.id"
           :description="dialog.description"
-          :roomId="dialog.room"
+          :roomId="dialog.roomId"
           :date="dialog.date"
           :startTime="dialog.startTime"
           :endTime="dialog.endTime"
@@ -91,13 +91,15 @@ function closeDialog() {
   dialog.roomId = null
 }
 function openDialog({  id=null, description=null, startTime=null, endTime=null, date =null,roomId = null }) {
-  dialog.isOpen = true
+
   dialog.id = id
   dialog.description= description
   dialog.startTime= startTime
   dialog.endTime= endTime
   dialog.date = date 
   dialog.roomId = roomId 
+  dialog.isOpen = true
+
 }
 
 const reservations = ref([])
@@ -123,6 +125,7 @@ const fetchReservations = async () => {
       title: `${reservation.description} - ${reservation.room}`,
       description: reservation.description,
       details: reservation.room,
+      roomId: reservation.roomId, 
       date: parseTimestamp(reservation.startTime).date,
       time: `${parseTimestamp(reservation.startTime).hour.toString().padStart(2, '0')}:${parseTimestamp(reservation.startTime).minute.toString().padStart(2, '0')}`,
       startTime: `${parseTimestamp(reservation.startTime).hour.toString().padStart(2, '0')}:${parseTimestamp(reservation.startTime).minute.toString().padStart(2, '0')}`,
