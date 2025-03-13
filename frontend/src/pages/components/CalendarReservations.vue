@@ -17,6 +17,21 @@
         </div>
       </template>
     </template>
+        <template #head-intervals="{ scope }"> 
+            <div style="
+                display: flex;
+                justify-content: center;
+                flex-direction: column;
+                width: 100%;
+                font-size: 10px;
+                font-weight: 700;
+              ">
+              <span>
+                  Mês/Ano {{ date.formatDate(`${scope.timestamps[0].date}T00:00:00` , 'MM/YYYY') }}
+                </span>
+                {{ scop }}
+            </div>
+          </template>
   </q-calendar>
 </template>
 
@@ -29,6 +44,7 @@ import {
   parseTime,
   parseTimestamp,
   QCalendar,
+
 } from '@quasar/quasar-ui-qcalendar'
 import '@quasar/quasar-ui-qcalendar/index.css' 
 import { date } from 'quasar'
