@@ -28,8 +28,7 @@
               ">
               <span>
                   Mês/Ano {{ date.formatDate(`${scope.timestamps[0].date}T00:00:00` , 'MM/YYYY') }}
-                </span>
-                {{ scop }}
+                </span> 
             </div>
           </template>
   </q-calendar>
