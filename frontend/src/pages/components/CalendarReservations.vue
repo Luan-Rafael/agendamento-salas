@@ -7,7 +7,7 @@
           v-if="event.time !== undefined"
           class="my-event"
           :class="badgeClasses(event, 'body')"
-          :style="badgeStyles(event, 'body', timeStartPos, timeDurationHeight, getReservations(timestamp.date))"
+          :style="badgeStyles(event, 'body', timeStartPos, timeDurationHeight)"
           @dblclick="() => openReservation(event)"
         >
           <div class="title q-calendar__ellipsis">
@@ -94,7 +94,7 @@ function badgeClasses(event, type) {
   }
 }
 
-function badgeStyles(event, _type, timeStartPos = null, timeDurationHeight = null, allEvents = []) {
+function badgeStyles(event, _type, timeStartPos = null, timeDurationHeight = null) {
   const s = {}
   
   // Calculando a posição e altura do evento
@@ -104,15 +104,6 @@ function badgeStyles(event, _type, timeStartPos = null, timeDurationHeight = nul
     s.backgroundColor = event.bgcolor
   }
   
-  // Aumenta o "top" se houver sobreposição com outro evento
-  const overlappingEvents = allEvents.filter(otherEvent => {
-    return otherEvent !== event && timeStartPos(event.time) === timeStartPos(otherEvent.time);
-  });
-
-  if (overlappingEvents.length > 0) {
-    // Se houver sobreposição, ajusta a posição para baixo
-    s.top = (parseInt(s.top, 10) + overlappingEvents.length * 25) + 'px'; // 25px é o deslocamento
-  }
 
   s['align-items'] = 'flex-start'
   return s
@@ -196,34 +187,7 @@ function onNext() {
   color: white;
 }
 
-.bg-blue {
-  background: blue;
-}
-
-.bg-green {
-  background: green;
-}
-
-.bg-orange {
-  background: orange;
-}
-
-.bg-red {
-  background: red;
-}
-
-.bg-teal {
-  background: teal;
-}
-
-.bg-grey {
-  background: grey;
-}
-
-.bg-purple {
-  background: purple;
-}
-
+ 
 .full-width {
   left: 0;
   width: calc(100% - 2px);
