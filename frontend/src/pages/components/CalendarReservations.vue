@@ -5,15 +5,14 @@
       <template v-for="event in getReservations(timestamp.date)" :key="event.id">
         <div
           v-if="event.time !== undefined"
-          class="my-event"
-          :class="badgeClasses(event, 'body')"
-          :style="badgeStyles(event, 'body', timeStartPos, timeDurationHeight)"
+          class="my-event rounded-border text-white" 
+          :style="badgeStyles(event, 'body', timeStartPos, timeDurationHeight, getReservations(event.date))"
           @dblclick="() => openReservation(event)"
         >
-          <div class="title q-calendar__ellipsis">
-            {{ event.title }}
-            <q-tooltip>{{ event.time + ' - ' + event.details }}</q-tooltip>
+          <div class="title">
+          {{ event.title }}
           </div>
+          <q-tooltip>{{event.description + ' - ' + event.time + ' - ' + event.details}}</q-tooltip>
         </div>
       </template>
     </template>
@@ -37,10 +36,7 @@
 <script setup>
 import { computed,  ref } from 'vue'
 import {
-  addToDate,
-  isBetweenDates,
-  parsed,
-  parseTime,
+  addToDate, 
   parseTimestamp,
   QCalendar,
 
@@ -82,19 +78,8 @@ const reservationsMap = computed(() => {
   })
   return map
 })
-
-function badgeClasses(event, type) {
-  const isHeader = type === 'header'
-  return {
-    [`text-white`]: true,
-    'full-width': !isHeader && (!event.side || event.side === 'full'),
-    'left-side': !isHeader && event.side === 'left',
-    'right-side': !isHeader && event.side === 'right',
-    'rounded-border': true,
-  }
-}
-
-function badgeStyles(event, _type, timeStartPos = null, timeDurationHeight = null) {
+ 
+function badgeStyles(event, _type, timeStartPos = null, timeDurationHeight = null, allEvents = []) {
   const s = {}
   
   // Calculando a posição e altura do evento
@@ -104,40 +89,34 @@ function badgeStyles(event, _type, timeStartPos = null, timeDurationHeight = nul
     s.backgroundColor = event.bgcolor
   }
   
+  let leftPosition = 0
+  
+  const overlappingEvents = allEvents.filter(otherEvent => {
+    return timeStartPos(event.time) === timeStartPos(otherEvent.time);
+  }).sort((a,b) => a.id - b.id);
+
+  let dynamicWidth = 100
+
+  if (overlappingEvents.length > 0) { 
+     dynamicWidth = dynamicWidth / overlappingEvents.length;  
+  }
+ 
+  if (overlappingEvents.length > 0) {
+    leftPosition = overlappingEvents.findIndex(e  => e.id === event.id ) * dynamicWidth
+  }
+
 
   s['align-items'] = 'flex-start'
+  s['left'] = `${leftPosition}%`
+  s['width'] =  `calc(${dynamicWidth}% - 3px)`
+  
   return s
 }
 
 function getReservations(dt) { 
   const events = reservationsMap.value[dt] || []
 
-  if (events.length === 1 && events[0]) {
-    events[0].side = 'full'
-  } else if (events.length === 2 && events[0] && events[1]) {
-    // this example does no more than 2 events per day
-    // check if the two events overlap and if so, select
-    // left or right side alignment to prevent overlap
-    const start = parsed(events[0].date)
-    if (start) {
-      const startTime = addToDate(start, { minute: parseTime(events[0].time) })
-      const endTime = addToDate(startTime, { minute: events[0].duration })
-      const startTime2 = addToDate(parsed(events[1].date), {
-        minute: parseTime(events[1].time),
-      })
-      const endTime2 = addToDate(startTime2, { minute: events[1].duration })
-      if (
-        isBetweenDates(startTime2, startTime, endTime, true) ||
-        isBetweenDates(endTime2, startTime, endTime, true)
-      ) {
-        events[0].side = 'left'
-        events[1].side = 'right'
-      } else {
-        events[0].side = 'full'
-        events[1].side = 'full'
-      }
-    }
-  }
+ 
 
   return events
 }
@@ -166,7 +145,7 @@ function onNext() {
   font-size: 12px;
   justify-content: center;
   margin: 0 1px;
-  text-overflow: ellipsis;
+
   overflow: hidden;
   cursor: pointer;
   border: 1px solid #ccc;
@@ -174,33 +153,11 @@ function onNext() {
 }
 
 .title {
-  position: relative;
   display: flex;
-  justify-content: center;
-  align-items: center;
   font-weight: bold;
   color: black;
-  height: 100%;
-}
-
-.text-white {
-  color: white;
-}
-
- 
-.full-width {
-  left: 0;
-  width: calc(100% - 2px);
-}
-
-.left-side {
-  left: 0;
-  width: calc(50% - 3px);
-}
-
-.right-side {
-  left: 50%;
-  width: calc(50% - 3px);
+  white-space: nowrap;  
+  max-width: 100%;  
 }
 
 .rounded-border {
