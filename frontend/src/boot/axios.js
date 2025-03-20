@@ -2,7 +2,7 @@ import { defineBoot } from '#q-app/wrappers'
 import axios from 'axios'
 import { useAuthStore } from 'src/stores/auth-store'
 
-const baseURL = process.env.NODE_ENV === 'production' ? '/api' : 'http://localhost:3001/api' // No desenvolvimento, use a porta 3001
+const baseURL = import.meta.env.MODE === 'production' ? '/api' : 'http://localhost:3001/api' // No desenvolvimento, use a porta 3001
 
 const api = axios.create({ baseURL })
 
